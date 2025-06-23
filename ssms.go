@@ -11,6 +11,7 @@ import (
     "os/exec"
     "path/filepath"
     "strings"
+    "time"
 )
 
 func main() {
@@ -43,6 +44,7 @@ func main() {
 
     if password != "" {
         err := setClipboard(password)
+        defer setClipboard("")
         if err != nil {
             fmt.Fprintf(os.Stderr, "Failed to set clipboard: %v\n", err)
             os.Exit(1)
@@ -60,6 +62,13 @@ func main() {
         fmt.Fprintf(os.Stderr, "Failed to start SSMS: %v\n", err)
         os.Exit(1)
     }
+    
+    if password != "" {
+        countDownTimer(5 * time.Minute)
+        setClipboard("")
+    }
+    // If no password, just exit as before.    
+        
     // Do not wait for SSMS to exit; just terminate this shim.
 }
 
@@ -78,6 +87,17 @@ func readConfig(confPath string) (string, error) {
         }
     }
     return "", fmt.Errorf("no valid SSMS path found in config")
+}
+
+// Helper function to countdown and clear clipboard
+func countDownTimer(duration time.Duration) {
+    seconds := int(duration.Seconds())
+    for i := seconds; i > 0; i-- {
+        mins := i / 60
+        secs := i % 60
+        fmt.Printf("\rExit in %02d:%02d...", mins, secs)
+        time.Sleep(1 * time.Second)
+    }
 }
 
 // Filters out -P and its value, returns remaining args and the password (if any).
@@ -102,6 +122,9 @@ func filterArgs(args []string) ([]string, string) {
 
 // Sets the clipboard text (Windows only).
 func setClipboard(text string) error {
+
+//    fmt.Printf("\nset clipboard %s\n", text)
+    
     user32 := syscall.NewLazyDLL("user32.dll")
     kernel32 := syscall.NewLazyDLL("kernel32.dll")
 
