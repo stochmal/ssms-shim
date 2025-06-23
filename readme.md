@@ -40,10 +40,10 @@ Or, download the source code as a ZIP and extract it.
 Open a **Command Prompt** or **PowerShell** in the project directory and run:
 
 ```sh
-go build -o ssms-shim.exe ssms.go
+go build -o ssms.exe ssms.go
 ```
 
-This will produce `ssms-shim.exe` in the current directory.
+This will produce `ssms.exe` in the current directory.
 
 ---
 
@@ -65,7 +65,7 @@ Run the shim just like you would run SSMS, passing any arguments you need.
 
 **Example:**
 ```sh
-ssms-shim.exe -S myserver -U myuser -P mypassword
+ssms.exe -S myserver -U myuser -P mypassword
 ```
 
 - The `-P` argument (password) will be copied to the clipboard instead of being passed to SSMS.
@@ -90,6 +90,6 @@ ssms-shim.exe -S myserver -U myuser -P mypassword
 
 ## License
 
-MIT License (or specify your license here)
+MIT License
 
 ---
